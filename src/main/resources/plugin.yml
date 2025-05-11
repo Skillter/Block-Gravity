@@ -1,0 +1,17 @@
+name: BlockGravity
+version: '1.0-SNAPSHOT'
+main: dev.skillter.blockgravity.BlockGravity
+api-version: '1.21'
+authors: [ Skillter ]
+description: Lets you gravitate blocks and do cool stuff!
+website: https://skillter.dev
+permissions:
+  blockgravity.*:
+    default: op
+  blockgravity.toggle:
+    default: op
+commands:
+  blockgravity:
+    usage: |
+      /<command> toggle
+      /<command> info
