@@ -10,6 +10,16 @@ import java.io.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import dev.skillter.blockgravity.config.ConfigEntriesEnum;
+
+
+
+// TODO: Optimize the config read/write
+//  Currently: I/O on every get() and set()
+//  Optimal: Load to memory on startup. No I/O on get(). Add reload() method and config reload command.
+
+
+
+
 public class Config {
     private static final String FILE_NAME = "config.json";
     private static final File FILE = new File(BlockGravity.INSTANCE.getDataFolder(), FILE_NAME);
