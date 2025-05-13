@@ -1,7 +1,6 @@
 package dev.skillter.blockgravity.command;
 
 import dev.skillter.blockgravity.Reference;
-import dev.skillter.blockgravity.permissions.PermissionsEnum;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -19,7 +18,7 @@ public class CommandBlockGravity implements CommandExecutor, TabCompleter {
 
     public static final String COMMAND_BASE = "blockgravity";
 
-    public static final String[] FIRST_ARGS = new String[]{"toggle", "info"};
+
 
 
 
@@ -34,15 +33,27 @@ public class CommandBlockGravity implements CommandExecutor, TabCompleter {
      */
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        if (!command.getName().equalsIgnoreCase(COMMAND_BASE))
-            return false; // exit prematurely if it's a different command
-
-        // /blockgravity
-        if (sender.hasPermission(PermissionsEnum.)) {
-
-        } else { // if incorrect usage
-            sendUsageMessage(sender);
+//        if (!command.getName().equalsIgnoreCase(COMMAND_BASE)) {
+//            return false; // exit prematurely if it's a different command
+//        }
+        /// /blockgravity
+        switch (args[0]) {
+            case CommandBlockGravityEnum.TOGGLE.getArg():
+                System.out.println("test");
+                break;
+            default:
+                System.out.println("d");
+                break;
         }
+
+
+//        if (args[0].equalsIgnoreCase(TOGGLE.getArg())
+//                && (TOGGLE.getRequiredPermission()!=null
+//                && sender.hasPermission())) {
+//            System.out.println("test2");
+//        } else { // if incorrect usage
+//            sendUsageMessage(sender);
+//        }
 
         return true;
     }
