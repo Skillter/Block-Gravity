@@ -4,15 +4,11 @@
 
 # Block Gravity 1.21.x
 
-<img src="https://skillter.dev" alt="Developer's Website" data-canonical-src="images/avatar.png" style="max-width: 100%;">
-
-
-[![Developer's Website][<images/avatar.png>]][<https://skillter.dev>]
-
-
 Lets you gravitate blocks and do cool stuff!
 
-Supported version: 1.21.x
+Version: **1.21.x**
+
+Download from [releases](https://github.com/Skillter/Block-Gravity/releases) 
 
 
 | Command                                       |                 Description                   |          Required Permission         | 
@@ -34,3 +30,7 @@ Supported version: 1.21.x
 |                                               |                                               |
 |                                               |                                               |
 |                                               |                                               |
+
+Made with ❤️ by Skillter
+
+<img src="images/avatar.png" alt="Developer's Website" width="3%" height="3%"> <img src="https://avatars.githubusercontent.com/u/57605954" alt="Developer's Github Profile" width="3%" height="3%">  
