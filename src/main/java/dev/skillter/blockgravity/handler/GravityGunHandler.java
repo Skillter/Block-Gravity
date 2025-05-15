@@ -11,6 +11,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
+import org.joml.Vector3d;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -20,6 +21,12 @@ public class GravityGunHandler {
     public static HashMap<UUID, FallingBlock> assignedGravityBlocks = new HashMap<>();
 
     public static void handle(@NotNull PlayerInteractEvent event) {
+        // Toggle mechanic
+        UUID finalPlayerUUID = event.getPlayer().getUniqueId();
+        if (assignedGravityBlocks.containsKey(finalPlayerUUID)) {
+            assignedGravityBlocks.remove(finalPlayerUUID);
+            return;
+        }
         Block clickedBlock = event.getClickedBlock();
         if (clickedBlock == null) {
             BlockGravity.INSTANCE.getLogger().warning("clickedBlock is null in GravityGunHandler");
@@ -27,11 +34,12 @@ public class GravityGunHandler {
         }
         event.getPlayer().sendMessage("poof! goes " + clickedBlock.getType().name());
 
-        Location location = clickedBlock.getLocation().clone().subtract(-0.5D, 0D, -0.5D);
+        Location location = clickedBlock.getLocation().clone().add(0.5D, 0.05D, 0.5D);
         BlockData blockData = event.getClickedBlock().getBlockData().clone();
 
         clickedBlock.setType(Material.AIR);
         FallingBlock fallingBlock = location.getWorld().spawnFallingBlock(location, blockData);
+        assignedGravityBlocks.putIfAbsent(event.getPlayer().getUniqueId(), fallingBlock);
         fallingBlock.setGravity(false);
 
         // change the lived ticks to 1 every 500 ticks to prevent the falling block from de-spawning (despawns on the 600th tick)
@@ -42,60 +50,47 @@ public class GravityGunHandler {
         }, 500, 500);
 
 
-        Location eyeLocation = event.getPlayer().getEyeLocation();
-        Location targetLocation = eyeLocation.subtract(0, 0.5, 0).add(eyeLocation.getDirection().multiply(2));
-        Location startingLocation = fallingBlock.getLocation();
-
 
         // Let's spend next 10 ticks transitioning the falling block to the right location
 
-
-//        fallingBlock.teleport(targetLocation);
-
-
-
-        // Set the falling block's velocity towards the target location
-//        Vector direction = targetLocation.toVector().subtract(fallingBlock.getLocation().toVector()).normalize();
-//        double distance = fallingBlock.getLocation().distance(targetLocation);
-
-        // Calculate speed based on distance (you can adjust this)
-//        double speed = 0.5; // Adjust as needed
-
-
-        Vector direction = targetLocation.toVector().subtract(startingLocation.toVector()).normalize();
-        double speed = 0.5; // Adjust this value to change the speed of movement.
-
-
-        fallingBlock.setVelocity(direction.multiply(speed));
-
-
-
-
-
-
-
-
-
-
-
-
         final int runEveryTicks = 2;
-        final int howManyTimes = 10;
+        final int howManyTicks = 20 * 10;
+        final int transitionInTicks = 10;
         new BukkitRunnable() {
-
-
             int loop = 0;
 
+            double startingSpeed = 0.3; // Adjust this value to change the speed of movement.
+            Location eyeLocation;
+            Location targetLocation;
+            Location startingLocation;
             @Override
             public void run() {
                 loop++;
+                fallingBlock.setVelocity(new Vector(0, 0, 0));
+                fallingBlock.teleport(fallingBlock.getLocation());
+                eyeLocation = event.getPlayer().getEyeLocation();
+                startingLocation = fallingBlock.getLocation();
+                targetLocation = eyeLocation.clone().subtract(0, 0.5, 0).add(eyeLocation.clone().getDirection().multiply(2));
+                Vector direction = targetLocation.toVector().subtract(startingLocation.toVector()).normalize();
+                Bukkit.broadcastMessage(String.valueOf(calculateDistanceInBlocks(startingLocation, targetLocation)));
+                fallingBlock.setVelocity(direction.clone().multiply(calculateDistanceInBlocks(startingLocation, targetLocation)).multiply(startingSpeed));
 
+//                Bukkit.broadcastMessage(loop + ": " + direction.toVector3d());
 
-                Bukkit.broadcastMessage("test run() " + loop);
-
-                if (loop >= howManyTimes) this.cancel();
+//                if (loop == transitionInTicks / runEveryTicks) startingSpeed=- 0.1;
+                if (loop >= howManyTicks / runEveryTicks) this.cancel();
             }
         }.runTaskTimer(BlockGravity.INSTANCE, 0L, runEveryTicks);
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -134,4 +129,24 @@ public class GravityGunHandler {
 //    static private void makeGravityBlock(BlockData blockData, Location location) {
 //
 //    }
+
+
+
+
+
+
+
+
+    private static double calculateDistanceInBlocks(Location loc1, Location loc2) {
+        double dx = Math.abs(loc1.getX() - loc2.getX());
+        double dy = Math.abs(loc1.getY() - loc2.getY());
+        double dz = Math.abs(loc1.getZ() - loc2.getZ());
+
+        return Math.sqrt(dx * dx + dy * dy + dz * dz);
+    }
+
+
+
+
+
 }
