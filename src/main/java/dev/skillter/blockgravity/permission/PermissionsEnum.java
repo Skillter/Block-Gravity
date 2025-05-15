@@ -1,4 +1,4 @@
-package dev.skillter.blockgravity.permissions;
+package dev.skillter.blockgravity.permission;
 
 import dev.skillter.blockgravity.Reference;
 import org.bukkit.permissions.Permission;
@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
 public enum PermissionsEnum {
 
     TOGGLE(".toggle", null),
+    GRAVITY_GUN(".gravitygun", "Pickup blocks with the gravity gun"),
     EXAMPLE(".examplepermission", null);
 
 

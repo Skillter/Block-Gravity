@@ -1,7 +1,9 @@
 package dev.skillter.blockgravity.command;
 
+import dev.skillter.blockgravity.BlockGravity;
 import dev.skillter.blockgravity.Reference;
-import org.bukkit.ChatColor;
+import dev.skillter.blockgravity.config.Config;
+import dev.skillter.blockgravity.config.ConfigEntriesEnum;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -9,19 +11,21 @@ import org.bukkit.command.TabCompleter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
-import java.util.List;
+import java.io.IOException;
+import java.util.*;
+import java.util.logging.Level;
+
+import static org.bukkit.ChatColor.*;
+
 
 public class CommandBlockGravity implements CommandExecutor, TabCompleter {
 
 
-
     public static final String COMMAND_BASE = "blockgravity";
 
-
-
-
-
+    private static final String[] FIRST_ARGS_ARRAY = Arrays.stream(CommandBlockGravityEnum.values())
+            .map(CommandBlockGravityEnum::getArg)
+            .toArray(String[]::new);
 
 
     /**
@@ -33,27 +37,30 @@ public class CommandBlockGravity implements CommandExecutor, TabCompleter {
      */
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-//        if (!command.getName().equalsIgnoreCase(COMMAND_BASE)) {
-//            return false; // exit prematurely if it's a different command
-//        }
+        if (!command.getName().equalsIgnoreCase(COMMAND_BASE)) {
+            return false; // exit prematurely if it's a different command
+        }
         /// /blockgravity
-        switch (args[0]) {
-            case CommandBlockGravityEnum.TOGGLE.getArg():
-                System.out.println("test");
-                break;
-            default:
-                System.out.println("d");
-                break;
+
+        if (args.length > 0 && isArgHasPerms(CommandBlockGravityEnum.TOGGLE, args[0], sender)) { // Check if the user has the required permission
+            try {
+                boolean oldState = Config.get(ConfigEntriesEnum.ENABLED);
+                Config.set(ConfigEntriesEnum.ENABLED, !oldState);
+                if (oldState)
+                    sender.sendMessage(Reference.PREFIX + "The plugin has been " + DARK_RED + "disabled" + RESET + "!");
+                else
+                    sender.sendMessage(Reference.PREFIX + "The plugin has been " + DARK_GREEN + "enabled" + RESET + "!");
+            } catch (IOException e) {
+                String msg = "The command '/blockgravity toggle' sent by " + sender.getName() + " has failed. Couldn't read the config.";
+                BlockGravity.INSTANCE.getLogger().log(Level.WARNING, msg, e.getCause());
+                sender.sendMessage(Reference.PREFIX + "The command has failed. Couldn't read the config.");
+            }
+        } else if (args.length > 0 && isArgHasPerms(CommandBlockGravityEnum.INFO, args[0], sender)) {
+            sendUsageMessage(sender);
+        } else {// if incorrect usage
+            sendUsageMessage(sender);
         }
 
-
-//        if (args[0].equalsIgnoreCase(TOGGLE.getArg())
-//                && (TOGGLE.getRequiredPermission()!=null
-//                && sender.hasPermission())) {
-//            System.out.println("test2");
-//        } else { // if incorrect usage
-//            sendUsageMessage(sender);
-//        }
 
         return true;
     }
@@ -74,11 +81,35 @@ public class CommandBlockGravity implements CommandExecutor, TabCompleter {
     @Override
     @Nullable
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+        if (args.length == 1) {
+            List<String> permittedArgs = new ArrayList<>();
+            for (CommandBlockGravityEnum commandBlockGravityEnum : CommandBlockGravityEnum.values()) {
+                if (commandBlockGravityEnum.getArg().startsWith(args[0]) && hasPerms(commandBlockGravityEnum, sender))
+                    permittedArgs.add(commandBlockGravityEnum.getArg());
+            }
+            return permittedArgs;
+        }
+
         return List.of();
     }
 
 
-    static public void sendUsageMessage(CommandSender sender) {
-        sender.sendMessage(Reference.PREFIX + ChatColor.GOLD + "/" + COMMAND_BASE + " " + Arrays.toString(FIRST_ARGS));
+    private void sendUsageMessage(CommandSender sender) {
+        sender.sendMessage(Reference.PREFIX + "/" + COMMAND_BASE + " " + Arrays.toString(FIRST_ARGS_ARRAY));
     }
+
+    private boolean isArgHasPerms(@NotNull CommandBlockGravityEnum referenceCommand, @NotNull String arg, @NotNull CommandSender sender) {
+        return referenceCommand.getArg().equalsIgnoreCase(arg) // Check if the argument is the same as the provided reference command's argument
+                && (referenceCommand.getRequiredPermission() == null || sender.hasPermission(referenceCommand.getRequiredPermission())); // Check if the user has the required permission
+    }
+
+    private boolean hasPerms(@NotNull CommandBlockGravityEnum referenceCommand, @NotNull CommandSender sender) {
+        return referenceCommand.getRequiredPermission() == null || sender.hasPermission(referenceCommand.getRequiredPermission()); // Check if the user has the required permission
+    }
+
+    private boolean getListOfArgsWithPerms(@NotNull CommandBlockGravityEnum referenceCommand, @NotNull CommandSender sender) {
+        return referenceCommand.getRequiredPermission() == null || sender.hasPermission(referenceCommand.getRequiredPermission()); // Check if the user has the required permission
+    }
+
 }
+

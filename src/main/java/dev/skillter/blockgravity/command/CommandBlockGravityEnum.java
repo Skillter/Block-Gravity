@@ -1,6 +1,6 @@
 package dev.skillter.blockgravity.command;
 
-import dev.skillter.blockgravity.permissions.PermissionsEnum;
+import dev.skillter.blockgravity.permission.PermissionsEnum;
 import org.bukkit.permissions.Permission;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

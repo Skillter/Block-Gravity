@@ -7,6 +7,7 @@ import com.google.gson.JsonParser;
 import dev.skillter.blockgravity.BlockGravity;
 
 import java.io.*;
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import dev.skillter.blockgravity.config.ConfigEntriesEnum;
@@ -22,7 +23,7 @@ import dev.skillter.blockgravity.config.ConfigEntriesEnum;
 
 public class Config {
     private static final String FILE_NAME = "config.json";
-    private static final File FILE = new File(BlockGravity.INSTANCE.getDataFolder(), FILE_NAME);
+    private static final File FILE = new File(BlockGravity.INSTANCE.getDataFolder().getAbsolutePath(), FILE_NAME);
 
     //public static FileConfiguration config = BlockGravity.INSTANCE.getConfig();
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -42,10 +43,12 @@ public class Config {
                 }
 
                 try {
+                    FILE.getParentFile().mkdirs();
+                    FILE.createNewFile();
                     setContent(generalCategory);
                 } catch (IOException e) {
-                    getLogger.log(Level.WARNING, "The config failed initializing.", e.getCause());
-                    e.getStackTrace();
+                    String msg = "The config failed initializing: " + e.getCause().toString();
+                    getLogger.log(Level.WARNING, msg, e.getCause());
                 }
             }
         } catch (Exception e) {
