@@ -6,7 +6,7 @@
 
 Lets you gravitate blocks and do cool stuff!
 
-Version: **1.21.x**
+Version: **1.21.x** (Spigot/Paper)
 
 Download from [releases](https://github.com/Skillter/Block-Gravity/releases) 
 
