@@ -1,8 +1,8 @@
-![Grass_Block 1.21.x](https://github.com/user-attachments/assets/39e36fac-95f5-4856-b941-d49b1f14e5a6)<div align="center">
+<div align="center">
 
 <img src="images/Grass_Block.png" alt="Minecraft Icon" width="10%" height="10%">
 
-# Block Gravity
+# Block Gravity 1.21.x
 
 [![Developer's Website][images/avatar.png]][https://skillter.dev]
 
