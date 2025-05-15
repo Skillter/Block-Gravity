@@ -21,8 +21,6 @@ public class GravityGunListener implements Listener {
 
         if (event.getHand() != null && (event.getHand() != EquipmentSlot.OFF_HAND)
                 && event.getItem() != null && event.getItem().getType().equals(Material.STICK)
-                && event.getAction().equals(Action.RIGHT_CLICK_BLOCK)
-                && !event.getClickedBlock().getType().isAir() && event.getClickedBlock().getType().isBlock() // Shouldn't happen, but just in case
                 && event.getPlayer().hasPermission(PermissionsEnum.GRAVITY_GUN.getPermission())) {
 //            Bukkit.broadcastMessage(event.getItem().toString() + event.getItem().getType().name() + event.getHand().name() + event.getAction().name() + event.getHandlers().toString() + event.getMaterial());
 //            Bukkit.broadcastMessage(event.getHand().name());
