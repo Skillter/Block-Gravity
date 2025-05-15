@@ -4,7 +4,10 @@
 
 # Block Gravity 1.21.x
 
-[![Developer's Website][https://github.com/Skillter/Block-Gravity/blob/fd88587d43976549457e9be93fdac2b682b5c91a/images/avatar.png]][https://skillter.dev]
+<img src="https://skillter.dev" alt="Developer's Website" data-canonical-src="images/avatar.png" style="max-width: 100%;">
+
+
+[![Developer's Website][<images/avatar.png>]][<https://skillter.dev>]
 
 
 Lets you gravitate blocks and do cool stuff!
