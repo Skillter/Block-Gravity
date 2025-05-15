@@ -33,4 +33,4 @@ Download from [releases](https://github.com/Skillter/Block-Gravity/releases)
 
 Made with ❤️ by Skillter
 
-<img src="images/avatar.png" alt="Developer's Website" width="3%" height="3%"> <img src="https://avatars.githubusercontent.com/u/57605954" alt="Developer's Github Profile" width="3%" height="3%">  
+<a href="https://skillter.dev/"><img src="images/avatar.png" alt="Developer's Website" width="3%" height="3%"> <a href="https://github.com/Skillter"><img src="https://avatars.githubusercontent.com/u/57605954" alt="Developer's Github Profile" width="3%" height="3%">
