@@ -1,13 +1,19 @@
 package dev.skillter.blockgravity.handler;
 
 import dev.skillter.blockgravity.BlockGravity;
+import dev.skillter.blockgravity.Reference;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.FallingBlock;
+import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
@@ -22,7 +28,7 @@ public class GravityGunHandler {
     public static HashMap<UUID, FallingBlock> assignedGravityBlocks = new HashMap<>();
     public static HashMap<UUID, ArrayList<Integer>> assignedTasks = new HashMap<>();
 
-    public static void handle(@NotNull PlayerInteractEvent event) {
+    public static void useGravityGun(@NotNull PlayerInteractEvent event) {
         // Toggle mechanic
         UUID finalPlayerUUID = event.getPlayer().getUniqueId();
         if ((event.getAction().equals(Action.RIGHT_CLICK_BLOCK) || event.getAction().equals(Action.RIGHT_CLICK_AIR))
@@ -120,35 +126,73 @@ public class GravityGunHandler {
 
     }
 
+    public static void throwBlock(@NotNull EntityDamageByEntityEvent event) {
+        Player player;
+        if (event.getDamager() instanceof Player){
+            player = (Player) event.getDamager();
+        } else {
+            event.getDamager().sendMessage(Reference.PREFIX + ChatColor.DARK_RED + "There was an error throwing the block.");
+            Bukkit.getLogger().warning(event.getDamager().getName() + " tried to throw a block using the gravity gun, but something didn't work.");
+            return;
+        }
+        throwBlock(player);
+    }
+    public static void throwBlock(@NotNull PlayerInteractEvent event) {
+        throwBlock(event.getPlayer());
+    }
+
+
+    private static void throwBlock(@NotNull Player player) {
+
+        double throwSpeed = 10;
+        final boolean keepOldVelocity = true;
+        UUID finalPlayerUUID = player.getUniqueId();
+
+        // Check if the gravity gun is in use
+        if (assignedGravityBlocks.containsKey(finalPlayerUUID)) {
+            Bukkit.broadcastMessage("Throwing the block");
+            FallingBlock fallingBlock = assignedGravityBlocks.get(finalPlayerUUID);
+            cancelHandling(finalPlayerUUID);
+
+            Location playerEyeLocation = player.getEyeLocation();
+            Vector playerDirection = playerEyeLocation.getDirection();
+            Vector velocityToApply = playerDirection.multiply(throwSpeed);
+            if (keepOldVelocity)
+                velocityToApply.add(fallingBlock.getVelocity());
+            fallingBlock.setVelocity(velocityToApply);
+
+
+        }
+    }
 
 //    static private void makeGravityBlock(BlockData blockData, Location location) {
 //
 //    }
 
 
-    private static double calculateDistanceInBlocks(Location loc1, Location loc2) {
-        double dx = Math.abs(loc1.getX() - loc2.getX());
-        double dy = Math.abs(loc1.getY() - loc2.getY());
-        double dz = Math.abs(loc1.getZ() - loc2.getZ());
+        private static double calculateDistanceInBlocks (Location loc1, Location loc2){
+            double dx = Math.abs(loc1.getX() - loc2.getX());
+            double dy = Math.abs(loc1.getY() - loc2.getY());
+            double dz = Math.abs(loc1.getZ() - loc2.getZ());
 
-        return Math.sqrt(dx * dx + dy * dy + dz * dz);
-    }
-
-    private static void cancelHandling(UUID playerUUID) {
-        if (assignedGravityBlocks.containsKey(playerUUID)) {
-            FallingBlock fallingBlock = assignedGravityBlocks.get(playerUUID);
-            fallingBlock.setTicksLived(1);
-            fallingBlock.setGravity(true);
-            assignedGravityBlocks.remove(playerUUID);
+            return Math.sqrt(dx * dx + dy * dy + dz * dz);
         }
 
-        if (assignedTasks.containsKey(playerUUID)) {
-            for (Integer taskID : assignedTasks.get(playerUUID)) {
-                Bukkit.getScheduler().cancelTask(taskID);
+        private static void cancelHandling (@NotNull UUID playerUUID){
+            if (assignedGravityBlocks.containsKey(playerUUID)) {
+                FallingBlock fallingBlock = assignedGravityBlocks.get(playerUUID);
+                fallingBlock.setTicksLived(1);
+                fallingBlock.setGravity(true);
+                assignedGravityBlocks.remove(playerUUID);
             }
-            assignedTasks.remove(playerUUID);
+
+            if (assignedTasks.containsKey(playerUUID)) {
+                for (Integer taskID : assignedTasks.get(playerUUID)) {
+                    Bukkit.getScheduler().cancelTask(taskID);
+                }
+                assignedTasks.remove(playerUUID);
+            }
         }
+
+
     }
-
-
-}
