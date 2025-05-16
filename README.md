@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="images/Grass_Block.png" alt="Minecraft Icon" width="15%" height="15%">
+<a href="https://github.com/Skillter/Block-Gravity"><img src="images/Grass_Block.png" alt="Minecraft Icon" width="15%" height="15%">
 
 # Block Gravity 1.21.x
 
